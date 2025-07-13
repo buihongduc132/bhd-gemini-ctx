@@ -1,0 +1,11 @@
+{
+  "url": "https://gemini.google.com/app",
+  "title": "Google Gemini",
+  "timestamp": "now",
+  "element_counts": {
+    "nav": 0,
+    "main": 1,
+    "buttons": 62,
+    "links": 1
+  }
+}
