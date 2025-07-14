@@ -27,31 +27,100 @@ This project provides tools for extracting and analyzing conversations from Goog
 
 ## Installation
 
-### Prerequisites
+### Quick Install
+```bash
+# Clone and install
+git clone https://github.com/buihongduc132/bhd-gemini-ctx.git
+cd bhd-gemini-ctx
+./install.sh
+```
+
+### Manual Installation
 ```bash
 # Python 3.8+ required
 python --version
 
-# Install dependencies
-pip install playwright beautifulsoup4 markitdown
+# Install package
+pip install -e .
+
+# Install Playwright browsers
+playwright install chromium
+
+# Create default configuration
+python -m src.config create
 ```
 
 ### Chrome Setup
 ```bash
-# Start Chrome with remote debugging
-google-chrome --remote-debugging-port=9222 --user-data-dir=/path/to/profile
+# Start Chrome with remote debugging (configurable port)
+google-chrome --remote-debugging-port=9222 --user-data-dir=$HOME/ChromeProfiles/default
+```
+
+### Configuration
+```bash
+# Show current configuration
+gemini-cli config --show
+
+# Configure browser settings
+gemini-cli config --cdp-port 9223 --user-data-dir /path/to/profile
+
+# Environment variables (optional)
+export GEMINI_CDP_PORT=9222
+export GEMINI_USER_DATA_DIR=/home/user/ChromeProfiles/default
+export GEMINI_OUTPUT_DIR=gemini_extracts
 ```
 
 ## Usage
 
-### Basic Extraction
+### CLI Usage (Recommended for AI Agents)
+
+#### 1. Extract Conversations
+```bash
+# Extract specific conversation
+gemini-cli extract https://gemini.google.com/app/abc123 --title "My Conversation"
+
+# Extract with custom format
+gemini-cli extract https://gemini.google.com/app/abc123 --format json
+```
+
+#### 2. Search Conversations
+```bash
+# Search for conversations about memory
+gemini-cli search "memory" --limit 5
+
+# Search and extract found conversations
+gemini-cli search "memory" --extract
+```
+
+#### 3. Analyze Conversations
+```bash
+# Analyze all conversations (text output)
+gemini-cli analyze
+
+# Get JSON analysis for AI processing
+gemini-cli analyze --format json
+```
+
+#### 4. List and Manage
+```bash
+# List all extracted conversations
+gemini-cli list
+
+# List in JSON format for AI agents
+gemini-cli list --format json
+
+# Get specific conversation summary
+gemini-cli get-summary structured_conversation_id
+```
+
+### Python API Usage
 
 #### 1. Simple Conversation Extraction
 ```python
 from src.enhanced_gemini_extractor import EnhancedGeminiExtractor
 
-# Initialize extractor
-extractor = EnhancedGeminiExtractor(cdp_port=9222)
+# Initialize extractor (uses config automatically)
+extractor = EnhancedGeminiExtractor()
 
 # Extract conversation
 result = await extractor.extract_conversation_with_structure(
@@ -60,13 +129,83 @@ result = await extractor.extract_conversation_with_structure(
 )
 ```
 
-#### 2. Command Line Usage
-```bash
-# Extract IOC conversation (example)
-python src/enhanced_gemini_extractor.py
+#### 2. Custom Configuration
+```python
+from src.config import GeminiConfig, BrowserConfig
+from src.enhanced_gemini_extractor import EnhancedGeminiExtractor
 
-# Analyze extracted conversations
-python src/conversation_analyzer.py
+# Custom configuration
+config = GeminiConfig(
+    browser=BrowserConfig(cdp_port=9223, user_data_dir="/custom/path"),
+    extraction={"output_dir": "custom_extracts"}
+)
+
+extractor = EnhancedGeminiExtractor(config=config)
+```
+
+### MCP (Model Context Protocol) Usage
+
+#### 1. Setup MCP Server
+```bash
+# Install MCP support
+pip install mcp
+
+# Start MCP server
+python -m src.mcp_server
+```
+
+#### 2. MCP Configuration
+Add to your MCP client configuration:
+```json
+{
+  "mcpServers": {
+    "gemini-context-extractor": {
+      "command": "python",
+      "args": ["-m", "src.mcp_server"],
+      "cwd": "/path/to/bhd-gemini-ctx",
+      "env": {
+        "GEMINI_CDP_PORT": "9222",
+        "GEMINI_USER_DATA_DIR": "/home/user/ChromeProfiles/default"
+      }
+    }
+  }
+}
+```
+
+#### 3. Available MCP Tools
+- **extract_conversation**: Extract conversation from URL
+- **search_conversations**: Search for conversations by query
+- **analyze_conversations**: Analyze all conversations
+- **get_conversation_summary**: Get summary of specific conversation
+- **list_conversations**: List all available conversations
+- **search_conversation_content**: Search within conversation content
+
+#### 4. MCP Resources
+- **gemini://conversation/{id}**: Access conversation data
+- **gemini://analysis/{id}**: Access analysis results
+
+#### 5. AI Agent Integration Example
+```python
+# AI agents can use MCP tools like this:
+{
+  "tool": "search_conversations",
+  "arguments": {
+    "query": "memory system architecture",
+    "limit": 5
+  }
+}
+
+# Response provides structured conversation data
+{
+  "conversations": [
+    {
+      "title": "BHD Memory coder 09Jun25",
+      "url": "https://gemini.google.com/app/94cecb9cb34fa6cf",
+      "message_count": 20,
+      "relevance_score": 0.95
+    }
+  ]
+}
 ```
 
 ### Advanced Features

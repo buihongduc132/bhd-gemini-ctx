@@ -4,19 +4,34 @@
 
 ## 🚀 Quick Start
 
-### 1. Setup Chrome
+### 1. Install
 ```bash
-google-chrome --remote-debugging-port=9222 --user-data-dir=/home/user/ChromeProfiles/default
+git clone https://github.com/buihongduc132/bhd-gemini-ctx.git
+cd bhd-gemini-ctx
+./install.sh
 ```
 
-### 2. Extract Conversation
+### 2. Setup Chrome
 ```bash
-python src/enhanced_gemini_extractor.py
+google-chrome --remote-debugging-port=9222 --user-data-dir=$HOME/ChromeProfiles/default
 ```
 
-### 3. Analyze Results
+### 3. CLI Usage
 ```bash
-python src/conversation_analyzer.py
+# Extract conversation
+gemini-cli extract https://gemini.google.com/app/abc123
+
+# Search conversations
+gemini-cli search "memory"
+
+# Analyze all
+gemini-cli analyze
+```
+
+### 4. MCP Usage
+```bash
+# Start MCP server for AI agents
+python -m src.mcp_server
 ```
 
 ## 📁 Key Files
@@ -31,36 +46,59 @@ python src/conversation_analyzer.py
 
 ## 🔧 Common Commands
 
-### Extract Specific Conversation
+### CLI Commands
+```bash
+# Configuration
+gemini-cli config --show
+gemini-cli config --cdp-port 9223 --user-data-dir /path/to/profile
+
+# Extraction
+gemini-cli extract URL --title "Title"
+gemini-cli search "query" --limit 10
+gemini-cli list --format json
+
+# Analysis
+gemini-cli analyze --format json
+```
+
+### MCP Tools for AI Agents
+```json
+{
+  "tool": "extract_conversation",
+  "arguments": {
+    "url": "https://gemini.google.com/app/abc123",
+    "title": "Memory Discussion"
+  }
+}
+
+{
+  "tool": "search_conversations",
+  "arguments": {
+    "query": "memory system",
+    "limit": 5
+  }
+}
+
+{
+  "tool": "analyze_conversations",
+  "arguments": {
+    "include_details": true
+  }
+}
+```
+
+### Python API
 ```python
 from src.enhanced_gemini_extractor import EnhancedGeminiExtractor
-
-extractor = EnhancedGeminiExtractor()
-result = await extractor.extract_conversation_with_structure(
-    "https://gemini.google.com/app/YOUR_CONVERSATION_ID",
-    "Conversation Title"
-)
-```
-
-### Analyze All Conversations
-```python
 from src.conversation_analyzer import ConversationAnalyzer
 
+# Extract with auto-config
+extractor = EnhancedGeminiExtractor()
+result = await extractor.extract_conversation_with_structure(url, title)
+
+# Analyze
 analyzer = ConversationAnalyzer()
 summary, analyses = analyzer.analyze_all_conversations()
-analyzer.print_summary_report(summary)
-```
-
-### Load Structured Data
-```python
-import json
-
-with open('gemini_extracts/structured_*.json', 'r') as f:
-    data = json.load(f)
-
-# Access messages
-for msg in data['messages']:
-    print(f"{msg['sender']}: {msg['content'][:50]}...")
 ```
 
 ## 📊 Output Files

@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "gemini-context-extractor": {
+      "command": "python",
+      "args": ["-m", "src.mcp_server"],
+      "cwd": "/home/bhd/Documents/Projects/bhd/bhd-gemini-ctx",
+      "env": {
+        "GEMINI_CDP_PORT": "9222",
+        "GEMINI_USER_DATA_DIR": "/home/bhd/ChromeProfiles/default",
+        "GEMINI_OUTPUT_DIR": "gemini_extracts"
+      }
+    }
+  }
+}

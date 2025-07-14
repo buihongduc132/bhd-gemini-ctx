@@ -20,12 +20,22 @@ except ImportError:
     print("⚠️ markitdown not available. Install with: pip install markitdown")
 
 class EnhancedGeminiExtractor:
-    def __init__(self, cdp_port: int = 9222):
-        self.cdp_port = cdp_port
-        self.cdp_url = f"http://localhost:{cdp_port}"
-        self.output_dir = Path("gemini_extracts")
+    def __init__(self, cdp_port: int = None, output_dir: str = None, config=None):
+        # Import here to avoid circular imports
+        from .config import get_config
+
+        # Use provided config or load default
+        if config is None:
+            config = get_config()
+
+        # Override with explicit parameters
+        self.cdp_port = cdp_port if cdp_port is not None else config.browser.cdp_port
+        self.output_dir = Path(output_dir) if output_dir else Path(config.extraction.output_dir)
+
+        self.cdp_url = f"http://localhost:{self.cdp_port}"
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        self.markitdown = MarkItDown() if MARKITDOWN_AVAILABLE else None
+        self.markitdown = MarkItDown() if MARKITDOWN_AVAILABLE and config.extraction.use_markitdown else None
+        self.config = config
     
     async def connect(self):
         """Connect to existing Chrome browser."""
