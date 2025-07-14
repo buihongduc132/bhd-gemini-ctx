@@ -1,0 +1,16 @@
+{
+  "browser": {
+    "cdp_port": 9222,
+    "user_data_dir": "/home/bhd/ChromeProfiles/default",
+    "headless": false,
+    "timeout": 30000,
+    "wait_for_network": true
+  },
+  "extraction": {
+    "output_dir": "gemini_extracts",
+    "use_markitdown": true,
+    "max_scroll_attempts": 15,
+    "scroll_delay_ms": 200,
+    "network_timeout": 10000
+  }
+}

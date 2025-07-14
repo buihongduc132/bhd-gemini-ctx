@@ -19,7 +19,7 @@ except ImportError:
 
 try:
     from .mcp_server import GeminiMCPServer
-except ImportError:
+except (ImportError, NameError):
     GeminiMCPServer = None
 
 __all__ = [

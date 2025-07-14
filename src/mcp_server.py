@@ -24,6 +24,14 @@ try:
     MCP_AVAILABLE = True
 except ImportError:
     MCP_AVAILABLE = False
+    # Create dummy classes for when MCP is not available
+    class Resource: pass
+    class Tool: pass
+    class TextContent: pass
+    class CallToolResult: pass
+    class GetResourceResult: pass
+    class Server:
+        def __init__(self, name): pass
     print("⚠️ MCP not available. Install with: pip install mcp")
 
 from .config import get_config
