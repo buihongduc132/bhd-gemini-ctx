@@ -1,6 +1,6 @@
 # Gemini Conversation Extractor
 
-A deterministic Python tool that extracts conversations from Google Gemini using Playwright automation and converts them to high-quality markdown using markitdown.
+A deterministic Python tool that extracts conversations from Google Gemini using Playwright automation and converts them to high-quality markdown using markitdown. Includes HTTP API server for AI agent integration.
 
 ## 🎯 Key Features
 
@@ -9,6 +9,9 @@ A deterministic Python tool that extracts conversations from Google Gemini using
 - **High-Quality Markdown** - Converts extracted content using markitdown library
 - **Network Stability Handling** - Proper waiting for dynamic content loading
 - **Multiple Output Formats** - HTML, Markdown, and JSON metadata
+- **HTTP API Server** - FastAPI-based server for AI agent integration
+- **RESTful Endpoints** - Search, extract, analyze, and list conversations via HTTP
+- **AI Agent Ready** - JSON responses with relevance scoring and structured data
 
 ## 📁 Project Structure
 
@@ -46,6 +49,9 @@ pip install -r requirements.txt
 
 # Install markitdown for high-quality markdown conversion
 pip install markitdown
+
+# For HTTP API server (recommended for AI agents)
+pip install fastapi uvicorn pydantic
 ```
 
 ### 3. Browser Setup
@@ -65,6 +71,32 @@ python src/gemini_extractor.py
 python src/gemini_extractor.py "browser-use"
 python src/gemini_extractor.py "debugging"
 ```
+
+### 5. HTTP API Server (Recommended for AI Agents)
+
+```bash
+# Start HTTP API server
+python -m src.simple_http_mcp --port 8000
+
+# Test the API
+curl http://127.0.0.1:8000/health
+
+# List conversations
+curl -X POST http://127.0.0.1:8000/list \
+  -H "Content-Type: application/json" -d '{}'
+
+# Search conversations
+curl -X POST http://127.0.0.1:8000/search \
+  -H "Content-Type: application/json" \
+  -d '{"query": "memory", "limit": 5}'
+
+# Extract conversation
+curl -X POST http://127.0.0.1:8000/extract \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://gemini.google.com/app/abc123", "title": "My Conversation"}'
+```
+
+**API Documentation**: Visit `http://127.0.0.1:8000/docs` for interactive API documentation.
 
 ## 📄 Output Files
 
