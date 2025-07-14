@@ -1,0 +1,30 @@
+{
+  "mcpServers": {
+    "gemini-context-extractor-http": {
+      "url": "http://127.0.0.1:8000",
+      "description": "HTTP API for Gemini conversation extraction and analysis",
+      "endpoints": {
+        "health": "GET /health",
+        "list": "POST /list",
+        "search": "POST /search", 
+        "extract": "POST /extract",
+        "analyze": "POST /analyze",
+        "details": "POST /details",
+        "tool": "POST /tool"
+      },
+      "env": {
+        "GEMINI_CDP_PORT": "9222",
+        "GEMINI_USER_DATA_DIR": "/home/bhd/ChromeProfiles/default",
+        "GEMINI_OUTPUT_DIR": "gemini_extracts"
+      }
+    }
+  },
+  "usage_examples": {
+    "start_server": "gemini-cli http-mcp --port 8000",
+    "health_check": "curl http://127.0.0.1:8000/health",
+    "list_conversations": "curl -X POST http://127.0.0.1:8000/list -H 'Content-Type: application/json' -d '{\"include_metadata\": true}'",
+    "search_conversations": "curl -X POST http://127.0.0.1:8000/search -H 'Content-Type: application/json' -d '{\"query\": \"memory\", \"limit\": 5}'",
+    "extract_conversation": "curl -X POST http://127.0.0.1:8000/extract -H 'Content-Type: application/json' -d '{\"url\": \"https://gemini.google.com/app/abc123\", \"title\": \"My Conversation\"}'",
+    "analyze_conversations": "curl -X POST http://127.0.0.1:8000/analyze -H 'Content-Type: application/json' -d '{\"include_details\": true}'"
+  }
+}

@@ -28,7 +28,17 @@ gemini-cli search "memory"
 gemini-cli analyze
 ```
 
-### 4. MCP Usage
+### 4. HTTP API Usage (Recommended)
+```bash
+# Start HTTP API server for AI agents
+gemini-cli http-mcp --port 8000
+
+# Test endpoints
+curl http://127.0.0.1:8000/health
+curl -X POST http://127.0.0.1:8000/list -H "Content-Type: application/json" -d '{}'
+```
+
+### 5. MCP Usage (Optional)
 ```bash
 # Start MCP server for AI agents
 python -m src.mcp_server
@@ -61,7 +71,30 @@ gemini-cli list --format json
 gemini-cli analyze --format json
 ```
 
-### MCP Tools for AI Agents
+### HTTP API for AI Agents
+```bash
+# Search conversations
+curl -X POST http://127.0.0.1:8000/search \
+  -H "Content-Type: application/json" \
+  -d '{"query": "memory system", "limit": 5}'
+
+# Extract conversation
+curl -X POST http://127.0.0.1:8000/extract \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://gemini.google.com/app/abc123", "title": "Memory Discussion"}'
+
+# Analyze conversations
+curl -X POST http://127.0.0.1:8000/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"include_details": true}'
+
+# Generic tool call
+curl -X POST http://127.0.0.1:8000/tool \
+  -H "Content-Type: application/json" \
+  -d '{"tool": "search_conversations", "arguments": {"query": "memory", "limit": 5}}'
+```
+
+### MCP Tools for AI Agents (Optional)
 ```json
 {
   "tool": "extract_conversation",
@@ -76,13 +109,6 @@ gemini-cli analyze --format json
   "arguments": {
     "query": "memory system",
     "limit": 5
-  }
-}
-
-{
-  "tool": "analyze_conversations",
-  "arguments": {
-    "include_details": true
   }
 }
 ```

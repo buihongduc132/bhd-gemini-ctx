@@ -143,9 +143,61 @@ config = GeminiConfig(
 extractor = EnhancedGeminiExtractor(config=config)
 ```
 
+### HTTP API Usage (Recommended for AI Agents)
+
+#### 1. Start HTTP API Server
+```bash
+# Start HTTP API server
+gemini-cli http-mcp --host 127.0.0.1 --port 8000
+
+# Or directly
+python -m src.simple_http_mcp --port 8000
+```
+
+#### 2. API Endpoints
+```bash
+# Health check
+curl http://127.0.0.1:8000/health
+
+# List conversations
+curl -X POST http://127.0.0.1:8000/list \
+  -H "Content-Type: application/json" \
+  -d '{"include_metadata": true}'
+
+# Search conversations
+curl -X POST http://127.0.0.1:8000/search \
+  -H "Content-Type: application/json" \
+  -d '{"query": "memory", "limit": 5}'
+
+# Extract conversation
+curl -X POST http://127.0.0.1:8000/extract \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://gemini.google.com/app/abc123", "title": "My Conversation"}'
+
+# Analyze conversations
+curl -X POST http://127.0.0.1:8000/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"include_details": true}'
+```
+
+#### 3. AI Agent Integration
+```python
+import requests
+
+# AI agents can use the HTTP API
+response = requests.post("http://127.0.0.1:8000/search", json={
+    "query": "memory system architecture",
+    "limit": 5
+})
+
+conversations = response.json()["results"]
+for conv in conversations:
+    print(f"Found: {conv['title']} (relevance: {conv['relevance_score']})")
+```
+
 ### MCP (Model Context Protocol) Usage
 
-#### 1. Setup MCP Server
+#### 1. Setup MCP Server (Optional)
 ```bash
 # Install MCP support
 pip install mcp

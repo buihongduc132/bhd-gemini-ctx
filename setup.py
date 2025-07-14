@@ -58,9 +58,11 @@ setup(
             "gemini-extract=src.enhanced_gemini_extractor:main",
             "gemini-analyze=src.conversation_analyzer:main",
             "gemini-config=src.config:main",
+            "gemini-http-mcp=src.simple_http_mcp:main",
         ],
         "mcp_servers": [
             "gemini-context-extractor=src.mcp_server:main",
+            "gemini-http-mcp-server=src.fastapi_mcp_server:main",
         ],
     },
     classifiers=[

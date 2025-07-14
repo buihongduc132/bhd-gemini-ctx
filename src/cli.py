@@ -145,14 +145,19 @@ Examples:
     # Config command
     config_parser = subparsers.add_parser('config', help='Manage configuration')
     config_parser.add_argument('--show', action='store_true', help='Show current config')
-    config_parser.add_argument('--create-default', action='store_true', 
+    config_parser.add_argument('--create-default', action='store_true',
                               help='Create default config file')
     config_parser.add_argument('--cdp-port', type=int, help='Chrome CDP port')
     config_parser.add_argument('--user-data-dir', help='Chrome user data directory')
     config_parser.add_argument('--headless', action='store_true', help='Enable headless mode')
     config_parser.add_argument('--output-dir', help='Output directory')
     config_parser.add_argument('--timeout', type=int, help='Browser timeout (ms)')
-    
+
+    # HTTP MCP Server command
+    http_mcp_parser = subparsers.add_parser('http-mcp', help='Start HTTP MCP server')
+    http_mcp_parser.add_argument('--host', default='127.0.0.1', help='Host to bind to')
+    http_mcp_parser.add_argument('--port', type=int, default=8000, help='Port to bind to')
+
     return parser
 
 async def main():
@@ -221,11 +226,23 @@ async def main():
                     config_updates['output_dir'] = args.output_dir
                 if args.timeout:
                     config_updates['timeout'] = args.timeout
-                
+
                 if config_updates:
                     cli.configure(**config_updates)
                 else:
                     print_config()
+
+        elif args.command == 'http-mcp':
+            print(f"🚀 Starting HTTP API Server on {args.host}:{args.port}")
+            try:
+                from .simple_http_mcp import SimpleHTTPMCPServer
+                server = SimpleHTTPMCPServer(host=args.host, port=args.port)
+                server.run()
+            except ImportError as e:
+                print(f"❌ Error: {e}")
+                print("💡 Install FastAPI dependencies: pip install fastapi uvicorn")
+            except Exception as e:
+                print(f"❌ Error starting HTTP API server: {e}")
     
     except KeyboardInterrupt:
         print("\n⚠️ Operation cancelled by user")
