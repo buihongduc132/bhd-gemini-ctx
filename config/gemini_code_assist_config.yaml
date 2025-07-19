@@ -1,0 +1,348 @@
+# Gemini Code Assist Integration Configuration
+# Enhanced configuration for dy-swarm intelligent resource routing
+
+# Core Integration Settings
+integration:
+  enabled: true
+  version: "1.0.0"
+  environment: "development"  # development, staging, production
+  
+# Gemini Code Assist API Configuration
+gemini_code_assist:
+  api_endpoint: "https://codeassist.googleapis.com/v1"
+  project_id: "${GEMINI_CODE_ASSIST_PROJECT_ID}"
+  region: "us-central1"
+  api_key: "${GEMINI_CODE_ASSIST_API_KEY}"
+  
+  # Rate limiting and quotas
+  rate_limits:
+    requests_per_minute: 60
+    requests_per_hour: 1000
+    requests_per_day: 10000
+  
+  # Timeout settings
+  timeouts:
+    connection_timeout: 30
+    read_timeout: 120
+    total_timeout: 180
+
+# Intelligent Router Configuration
+intelligent_router:
+  # Routing decision criteria
+  routing_rules:
+    code_review:
+      simple:
+        target: "gemini_code_assist"
+        criteria:
+          max_files: 5
+          max_lines_per_file: 500
+          max_total_lines: 2000
+        confidence_threshold: 0.8
+      
+      complex:
+        target: "gemini_pro"
+        criteria:
+          min_files: 6
+          min_lines_per_file: 500
+          complexity_score: 0.7
+        fallback: "gemini_code_assist"
+      
+      security_focused:
+        target: "local_llama"
+        criteria:
+          contains_secrets: true
+          security_sensitive: true
+        mandatory: true
+    
+    code_generation:
+      default_target: "gemini_code_assist"
+      fallback_target: "gemini_pro"
+      
+    documentation:
+      target: "gemini_code_assist"
+      enhancement_target: "gemini_pro"
+  
+  # Decision weights
+  decision_weights:
+    privacy_score: 0.4
+    complexity_score: 0.3
+    cost_efficiency: 0.2
+    performance_requirement: 0.1
+
+# Privacy Classification System
+privacy:
+  enabled: true
+  classification_levels:
+    - "public"
+    - "internal"
+    - "confidential"
+    - "sensitive"
+  
+  # Sensitive data patterns (regex)
+  sensitive_patterns:
+    api_keys:
+      - "api[_-]?key\\s*[=:]\\s*['\"][^'\"]+['\"]"
+      - "API[_-]?KEY\\s*[=:]\\s*['\"][^'\"]+['\"]"
+    
+    passwords:
+      - "password\\s*[=:]\\s*['\"][^'\"]+['\"]"
+      - "PASSWORD\\s*[=:]\\s*['\"][^'\"]+['\"]"
+      - "pwd\\s*[=:]\\s*['\"][^'\"]+['\"]"
+    
+    secrets:
+      - "secret\\s*[=:]\\s*['\"][^'\"]+['\"]"
+      - "SECRET\\s*[=:]\\s*['\"][^'\"]+['\"]"
+    
+    tokens:
+      - "token\\s*[=:]\\s*['\"][^'\"]+['\"]"
+      - "TOKEN\\s*[=:]\\s*['\"][^'\"]+['\"]"
+      - "jwt\\s*[=:]\\s*['\"][^'\"]+['\"]"
+    
+    private_keys:
+      - "private[_-]?key"
+      - "PRIVATE[_-]?KEY"
+      - "-----BEGIN PRIVATE KEY-----"
+      - "-----BEGIN RSA PRIVATE KEY-----"
+  
+  # Repository classification rules
+  repository_rules:
+    private_repos:
+      default_classification: "internal"
+      override_patterns:
+        - pattern: ".*confidential.*"
+          classification: "confidential"
+        - pattern: ".*secret.*"
+          classification: "sensitive"
+    
+    public_repos:
+      default_classification: "public"
+      sensitive_files:
+        - ".env"
+        - "config.json"
+        - "secrets.yaml"
+  
+  # Data sanitization rules
+  sanitization:
+    enabled: true
+    replacement_token: "[REDACTED]"
+    preserve_structure: true
+
+# Cost Optimization Configuration
+cost_optimization:
+  enabled: true
+  
+  # Daily usage limits
+  daily_limits:
+    gemini_code_assist: 800
+    gemini_pro: 200
+    local_llama: 1000  # No external cost
+    featherless_ai: 500
+    openrouter: 100
+  
+  # Cost per request estimates (in USD)
+  cost_estimates:
+    gemini_code_assist: 0.002
+    gemini_pro: 0.005
+    local_llama: 0.0
+    featherless_ai: 0.001
+    openrouter: 0.003
+  
+  # Budget controls
+  budget:
+    daily_budget_usd: 10.0
+    weekly_budget_usd: 60.0
+    monthly_budget_usd: 200.0
+    alert_threshold: 0.8  # Alert at 80% of budget
+  
+  # Caching configuration
+  caching:
+    enabled: true
+    ttl_hours: 24
+    max_cache_size_mb: 100
+    cache_hit_ratio_target: 0.3
+
+# Pipeline Integration Settings
+pipeline_integration:
+  idea_to_done:
+    enabled: true
+    stages:
+      pre_execution:
+        code_assist_analysis: true
+        complexity_estimation: true
+        approach_recommendation: true
+      
+      execution:
+        real_time_suggestions: true
+        quality_checks: true
+        security_scanning: true
+      
+      post_execution:
+        automated_review: true
+        documentation_generation: true
+        knowledge_capture: true
+  
+  intelligent_rag:
+    enabled: true
+    code_query_detection: true
+    enhanced_code_examples: true
+    documentation_updates: true
+    context_aware_suggestions: true
+
+# GitHub Integration
+github:
+  enabled: true
+  webhook_secret: "${GITHUB_WEBHOOK_SECRET}"
+  token: "${GITHUB_TOKEN}"
+  
+  # Automated actions
+  automated_actions:
+    pr_reviews: true
+    commit_message_enhancement: true
+    merge_conflict_assistance: true
+    quality_gates: true
+  
+  # Review configuration
+  review_settings:
+    auto_review_threshold: 0.7
+    require_human_review_for:
+      - "security_issues"
+      - "breaking_changes"
+      - "performance_regressions"
+    
+    comment_style: "constructive"
+    include_suggestions: true
+    include_explanations: true
+
+# Linear Integration
+linear:
+  enabled: true
+  api_key: "${LINEAR_API_KEY}"
+  team_id: "${LINEAR_TEAM_ID}"
+  
+  # Automated task creation
+  task_creation:
+    enabled: true
+    severity_threshold: "medium"
+    auto_assign: false
+    default_labels:
+      - "code-quality"
+      - "automated"
+      - "code-assist"
+  
+  # Task enhancement
+  task_enhancement:
+    complexity_scoring: true
+    effort_estimation: true
+    approach_recommendations: true
+    dependency_analysis: true
+
+# Monitoring and Metrics
+monitoring:
+  enabled: true
+  
+  # Metrics collection
+  metrics:
+    performance_metrics: true
+    cost_metrics: true
+    quality_metrics: true
+    usage_metrics: true
+  
+  # Alerting
+  alerts:
+    budget_threshold: true
+    error_rate_threshold: 0.05
+    response_time_threshold: 30000  # 30 seconds
+    quality_score_threshold: 0.6
+  
+  # Reporting
+  reporting:
+    daily_reports: true
+    weekly_summaries: true
+    monthly_analytics: true
+    export_format: "json"
+
+# Security Configuration
+security:
+  # API security
+  api_security:
+    require_authentication: true
+    rate_limiting: true
+    request_validation: true
+    response_sanitization: true
+  
+  # Audit logging
+  audit_logging:
+    enabled: true
+    log_level: "INFO"
+    include_request_data: false  # Privacy protection
+    include_response_data: false  # Privacy protection
+    retention_days: 90
+  
+  # Encryption
+  encryption:
+    data_in_transit: true
+    data_at_rest: true
+    key_rotation_days: 90
+
+# Development and Testing
+development:
+  debug_mode: false
+  verbose_logging: false
+  test_mode: false
+  
+  # Mock services for testing
+  mock_services:
+    gemini_code_assist: false
+    github_api: false
+    linear_api: false
+  
+  # Feature flags
+  feature_flags:
+    experimental_features: false
+    beta_features: true
+    advanced_routing: true
+
+# Fallback and Error Handling
+error_handling:
+  # Retry configuration
+  retry_policy:
+    max_retries: 3
+    backoff_strategy: "exponential"
+    base_delay_seconds: 1
+    max_delay_seconds: 60
+  
+  # Fallback targets
+  fallback_routing:
+    gemini_code_assist_unavailable: "gemini_pro"
+    gemini_pro_unavailable: "local_llama"
+    all_external_unavailable: "local_llama"
+  
+  # Circuit breaker
+  circuit_breaker:
+    enabled: true
+    failure_threshold: 5
+    recovery_timeout_seconds: 300
+    half_open_max_calls: 3
+
+# Performance Tuning
+performance:
+  # Concurrency settings
+  concurrency:
+    max_concurrent_requests: 10
+    request_queue_size: 100
+    worker_threads: 4
+  
+  # Optimization settings
+  optimization:
+    request_batching: true
+    response_compression: true
+    connection_pooling: true
+    keep_alive: true
+  
+  # Resource limits
+  resource_limits:
+    max_memory_mb: 512
+    max_cpu_percent: 80
+    max_request_size_mb: 10
+    max_response_size_mb: 50
+
